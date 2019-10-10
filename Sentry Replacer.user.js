@@ -36,7 +36,7 @@
     };
     unsafeWindow.Sentry=getEmptyItem("Sentry");
     Object.defineProperty(
-        window,"Sentry",{
+        unsafeWindow,"Sentry",{
             set(value){
                 return;
             },get(){
