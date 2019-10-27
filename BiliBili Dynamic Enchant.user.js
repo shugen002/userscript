@@ -3,6 +3,11 @@
 // @version      0.1
 // @description  破站动态增强，增加发布时间和浏览次数显示
 // @author       Shugen
+// @run-at       document-body
+// @updateURL    https://github.com/shugen002/userscript/raw/master/BiliBili%20Dynamic%20Enchant.user.js
+// @downloadURL  https://github.com/shugen002/userscript/raw/master/BiliBili%20Dynamic%20Enchant.user.js
+// @supportURL   https://github.com/shugen002/userscript/issue
+// @homepage     https://github.com/shugen002/userscript
 // @match        *://*.bilibili.com/*
 // @grant        none
 // ==/UserScript==
