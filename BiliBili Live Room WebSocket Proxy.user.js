@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
-// @author       You
+// @author       Shugen
 // @include      /^https?:\/\/live\.bilibili\.com\//
 // @grant        none
 // ==/UserScript==
@@ -21,7 +21,7 @@
             var handler = {
                 construct: function (target, args) {
                     debugger;
-                    window.latestReceiver=args[0].onReceivedMessage;
+                    window.latestReceiver = args[0].onReceivedMessage;
                     args[0].__onReceivedMessage = args[0].onReceivedMessage;
                     args[0].onReceivedMessage = function () {
                         //console.log("received Messages:",arguments[0]);
