@@ -30,7 +30,6 @@
                     if(args[0].html){
                        args[0].html = args[0].html.replace("@56h.webp","")
                     }
-                    console.log(args[0])
                 }
                 return this._add(...args)
             };
