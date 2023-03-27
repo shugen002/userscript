@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         自动模拟点击原画
-// @namespace    http://tampermonkey.net/
+// @namespace    https://shugen002.github.io/userscript
 // @version      0.1
 // @description  提高观众体验，顺带给破站增加亿点带宽成本
-// @author       You
+// @author       shugen002
 // @match        https://live.bilibili.com/*
 // @match        https://live.bilibili.com/blanc/*
 // @exclude      https://live.bilibili.com/p/*
