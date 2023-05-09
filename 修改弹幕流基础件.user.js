@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改弹幕流基础件
 // @version      0.2
-// @namespace    https://shugen002.github.io/userscript
+// @namespace    https://github.com/shugen002/userscript
 // @description  修改直播弹幕流基础件
 // @license      MIT
 // @author       Shugen002
@@ -10,7 +10,7 @@
 // @exclude      https://live.bilibili.com/p/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=bilibili.com
 // @grant        none
-// @updateURL  https://github.com/shugen002/userscript/raw/master/%E4%BF%AE%E6%94%B9%E5%BC%B9%E5%B9%95%E6%B5%81%E5%9F%BA%E7%A1%80%E4%BB%B6.user.js
+// @updateURL    https://github.com/shugen002/userscript/raw/master/%E4%BF%AE%E6%94%B9%E5%BC%B9%E5%B9%95%E6%B5%81%E5%9F%BA%E7%A1%80%E4%BB%B6.user.js
 // @downloadURL  https://github.com/shugen002/userscript/raw/master/%E4%BF%AE%E6%94%B9%E5%BC%B9%E5%B9%95%E6%B5%81%E5%9F%BA%E7%A1%80%E4%BB%B6.user.js
 // @run-at       document-start
 // ==/UserScript==
