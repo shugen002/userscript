@@ -16,7 +16,21 @@
     if(!window.$$danmuPatcher){
         window.$$danmuPatcher=[]
     }
+    // 数字的n种写法
+    const numMap={
+        "0": "[0oO零]",
+        "1": "[1l一壹]",
+        "2": "[2二贰]",
+        "3": "[3౩꒱三叁]",
+        "4": "[4四肆]",
+        "5": "[5五伍]",
+        "6": "[6Ⳓნେ六陆]",
+        "7": "(𖩈|[7˥ꓶ七柒])",
+        "8": "(𐌚|[ଃ8ꯕ႘੪八捌])",
+        "9": "[9୨九玖]"
+    }
 
+    
     var filters=[]
     var excludeFilter=[]
     window.$$reported=[]
@@ -29,7 +43,7 @@
     ]
     var contactMethod=[
         ...matchNumber.map((e)=>{
-            return new RegExp("^(.*[^\d])?"+e.toString().split("").join("[^\d]*")+"([^\d].*)?$")
+            return new RegExp(e.toString().split("").map((e)=>{return numMap[e]||e}).join("[^\d]*"))
         }),
         //你也可以在这里塞入你的正则表达式 
     ]
