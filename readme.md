@@ -12,17 +12,17 @@
 
 [![安装脚本](https://img.shields.io/badge/%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC-ForceAllowLive-blue?logo=Greasy%20Fork)](https://greasyfork.org/scripts/537331)
 
-用来绕过B站直播要求5000粉以上才能使用OBS直播的设定。
+用来绕过B站直播要求5000粉以上才能使用OBS直播的设定，顺带修了下虚拟区开播需要扫脸验证时不显示二维码的问题。
 
 为了不和自己其他东西产生可能的打架，选了一个偏僻的注入点，如果后续消失会换成常规注入点，但脚本打架可能就是问题了。
 
-扫脸那些自己在B站找个人发个私信，内容是
+<del>虚拟区需要扫脸那些自己在B站找个人发个私信，内容是</del>
 
 ```
 https://www.bilibili.com/blackboard/live/face-auth-middle.html?source_event=400&mid=你的UID
 ```
 
-然后点击链接就能扫脸，然后就能开播了
+<del>然后点击链接就能扫脸，然后就能开播了</del>
 
 ## Bilibili WebSocket Proxy Rebuild
 
