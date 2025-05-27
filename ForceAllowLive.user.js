@@ -5,6 +5,7 @@
 // @description  强制B站直播允许第三方开播，顺带处理人脸识别无二维码的问题。
 // @author       shugen
 // @match        https://link.bilibili.com/p/center/index
+// @match        https://link.bilibili.com/p/center/index?*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=bilibili.com
 // @run-at       document-start
 // @license      WTFPL
