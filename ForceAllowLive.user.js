@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ForceAllowLive 强制B站直播允许第三方开播
 // @namespace    https://shugen002.github.io/userscript
-// @version      0.3
+// @version      0.4
 // @description  强制B站直播允许第三方开播，顺带处理人脸识别无二维码的问题。
 // @author       shugen
 // @match        https://link.bilibili.com/p/center/index
@@ -10,8 +10,8 @@
 // @run-at       document-start
 // @license      WTFPL
 // @grant        none
-// @downloadURL  https://update.greasyfork.org/scripts/537331/ForceAllowLive%20%E5%BC%BA%E5%88%B6B%E7%AB%99%E7%9B%B4%E6%92%AD%E5%85%81%E8%AE%B8%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BC%80%E6%92%AD.user.js
-// @updateURL    https://update.greasyfork.org/scripts/537331/ForceAllowLive%20%E5%BC%BA%E5%88%B6B%E7%AB%99%E7%9B%B4%E6%92%AD%E5%85%81%E8%AE%B8%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BC%80%E6%92%AD.meta.js
+// @downloadURL https://update.greasyfork.org/scripts/537331/ForceAllowLive%20%E5%BC%BA%E5%88%B6B%E7%AB%99%E7%9B%B4%E6%92%AD%E5%85%81%E8%AE%B8%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BC%80%E6%92%AD.user.js
+// @updateURL https://update.greasyfork.org/scripts/537331/ForceAllowLive%20%E5%BC%BA%E5%88%B6B%E7%AB%99%E7%9B%B4%E6%92%AD%E5%85%81%E8%AE%B8%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BC%80%E6%92%AD.meta.js
 // ==/UserScript==
 
 (function () {
@@ -39,6 +39,8 @@
 
     async function main() {
         injectWebpackJsonp()
+        injectFetch()
+        setupFetchFilter()
     }
 
     function injectWebpackJsonp() {
@@ -61,17 +63,47 @@
         }
     }
 
-    function getUID() {
-        // 从 Cookie 中获取 UID
-        let ck = document.cookie.split('; ').find(row => {
-            return row.startsWith('DedeUserID=');
-        });
-        if (ck) {
-            let uid = ck.split('=')[1];
-            return uid;
+    function injectFetch() {
+        // 免得和自己其他脚本打架了
+        if (!window.$$fetchFilter) {
+            window.$$originalFetch = window.fetch;
+            window.$$fetchFilter = []
+            window.fetch = function (...args) {
+                if (typeof args[0] != "string") {
+                    return window.$$originalFetch(...args);
+                }
+
+                for (const element of window.$$fetchFilter) {
+                    try {
+                        let result = element(window.$$originalFetch, args)
+                        if (result) {
+                            return result
+                        }
+                    } catch (error) {
+                        console.log("[Fetch Override]", element, args, error)
+                    }
+                }
+                return window.$$originalFetch(...args)
+            }
         }
-        myConsole.warn("获取UID失败，可能是因为没有登录或Cookie未设置。")
-        return 0;
+    }
+
+    function setupFetchFilter() {
+        window.$$fetchFilter.push(function (originalFetch, args) {
+            if (args[0].startsWith("//api.live.bilibili.com/xlive/app-blink/v1/streaming/WebLiveCenterStartLive")) {
+                let url = new URL("https:" + args[0])
+                let data = url.searchParams
+                data.set("platform", "pc_link")
+                args[0] = "//api.live.bilibili.com/room/v1/Room/startLive"
+                args[1].body = data
+                // if (args[0].transformResponse.toString() == "[object Object]") {
+                //     args[0].transformResponse["FixNoQRCode"] = FixNoQRCode
+                // } else {
+                //     args[0].transformResponse.push(FixNoQRCode)
+                // }
+                myConsole.log("override start live request success.")
+            }
+        })
     }
 
     function ForceLivePermission(res) {
@@ -87,13 +119,12 @@
         return res
     }
 
-    function FixNoQRCode(res) {
+    function TranslateToNew(res) {
         try {
-            if (res.code == 60024 && res.data.qr == "") {
-                res.data.qr = "https://www.bilibili.com/blackboard/live/face-auth-middle.html?source_event=400&mid=" + getUID()
-            }
+            res.data.addr = res.data.rtmp
+            res.data.line = res.data.stream_line
         } catch (error) {
-            myConsole.error("修正人脸识别无二维码时出错：", error);
+            myConsole.error("新老接口转换时出错：", error);
         }
         return res
     }
@@ -105,6 +136,7 @@
         let apiEntry = entries.find((entry) => {
             return entry[1].toString().includes("getAllResponseHeaders")
         })
+        let roomId
         if (apiEntry) {
             myConsole.log('Get Bxios')
             apiEntry[1]._call = apiEntry[1].call
@@ -114,10 +146,17 @@
                 overrideBxios = true;
                 myConsole.log('Bxios Get Overrided.')
                 args[1].exports = function (...args) {
-                    if (args[0].url == "//api.live.bilibili.com/room/v1/Room/startLive") {
-                        args[0].data = args[0].data.replace("&platform=pc", "&platform=web")
+                    if (args[0].params && args[0].params.room_id) {
+                        roomId = args[0].params.room_id
+                    }
+
+                    if (args[0].url == "//api.live.bilibili.com/xlive/app-blink/v1/live/FetchWebUpStreamAddr") {
+                        console.log(args[0])
+                        args[0].url = "//api.live.bilibili.com/live_stream/v1/StreamList/get_stream_by_roomId"
+                        args[0].method = "GET"
+                        args[0].params = { room_id: roomId }
                         if (args[0].transformResponse.toString() == "[object Object]") {
-                            args[0].transformResponse["FixNoQRCode"] = FixNoQRCode
+                            args[0].transformResponse["TranslateToNew"] = TranslateToNew
                         } else {
                             args[0].transformResponse.push(FixNoQRCode)
                         }
