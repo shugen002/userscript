@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ForceAllowLive 强制B站直播允许第三方开播
 // @namespace    https://shugen002.github.io/userscript
-// @version      0.4
+// @version      0.5
 // @description  强制B站直播允许第三方开播，顺带处理人脸识别无二维码的问题。
 // @author       shugen
 // @match        https://link.bilibili.com/p/center/index
@@ -158,7 +158,7 @@
                         if (args[0].transformResponse.toString() == "[object Object]") {
                             args[0].transformResponse["TranslateToNew"] = TranslateToNew
                         } else {
-                            args[0].transformResponse.push(FixNoQRCode)
+                            // args[0].transformResponse.push(FixNoQRCode)
                         }
                         myConsole.log("override start live request success.")
                     }
