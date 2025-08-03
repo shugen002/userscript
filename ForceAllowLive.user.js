@@ -2,7 +2,7 @@
 // @name         ForceAllowLive 强制B站直播允许第三方开播
 // @namespace    https://shugen002.github.io/userscript
 // @version      0.5
-// @description  强制B站直播允许第三方开播，顺带处理人脸识别无二维码的问题。
+// @description  强制B站直播允许第三方开播。
 // @author       shugen
 // @match        https://link.bilibili.com/p/center/index
 // @match        https://link.bilibili.com/p/center/index?*
@@ -158,7 +158,8 @@
                         if (args[0].transformResponse.toString() == "[object Object]") {
                             args[0].transformResponse["TranslateToNew"] = TranslateToNew
                         } else {
-                            // args[0].transformResponse.push(FixNoQRCode)
+                            // args[0].transformResponse.push(FixNoQRCode) 
+                            // 我这边忘记补回修复的代码，破站自己把响应问题修了，，，这就有点抽象了。。。
                         }
                         myConsole.log("override start live request success.")
                     }
