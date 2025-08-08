@@ -37,6 +37,8 @@
 
     let overrideBxios = false
 
+    let needOverride = true;
+
     async function main() {
         injectWebpackJsonp()
         injectFetch()
@@ -109,7 +111,11 @@
     function ForceLivePermission(res) {
         try {
             myConsole.info(`当前直播权限 ${res.data.allow_live} 粉丝数量要求 ${res.data.fans_threshold} 是否需要提示 ${res.data.need_notice}`)
-            if (!res.data.allow_live && typeof res.data.allow_live == 'boolean') {
+            if (Object.keys(res.data).includes("allow_live") && typeof res.data.allow_live == 'boolean') {
+                if (res.data.allow_live) {
+                    needOverride = false
+                    window.alert("检测到你当前已经可以直接在网页上开启直播，同时B站也已经修复了无法扫脸的问题，建议您卸载本脚本。感谢您的使用。")
+                }
                 res.data.allow_live = true;
             }
         } catch (error) {
@@ -146,11 +152,18 @@
                 overrideBxios = true;
                 myConsole.log('Bxios Get Overrided.')
                 args[1].exports = function (...args) {
+                    if (!needOverride) {
+                        let result = real(...args)
+                        return result
+                    }
                     if (args[0].params && args[0].params.room_id) {
                         roomId = args[0].params.room_id
                     }
 
                     if (args[0].url == "//api.live.bilibili.com/xlive/app-blink/v1/live/FetchWebUpStreamAddr") {
+                        if (!roomId) {
+                            roomId = window.prompt("未能获取到你的房间号，请手动输入您的房间号")
+                        }
                         console.log(args[0])
                         args[0].url = "//api.live.bilibili.com/live_stream/v1/StreamList/get_stream_by_roomId"
                         args[0].method = "GET"
@@ -158,8 +171,7 @@
                         if (args[0].transformResponse.toString() == "[object Object]") {
                             args[0].transformResponse["TranslateToNew"] = TranslateToNew
                         } else {
-                            // args[0].transformResponse.push(FixNoQRCode) 
-                            // 我这边忘记补回修复的代码，破站自己把响应问题修了，，，这就有点抽象了。。。
+                            // args[0].transformResponse.push(FixNoQRCode)
                         }
                         myConsole.log("override start live request success.")
                     }
