@@ -92,6 +92,7 @@
 
     function setupFetchFilter() {
         window.$$fetchFilter.push(function (originalFetch, args) {
+            if (!needOverride) return
             if (args[0].startsWith("//api.live.bilibili.com/xlive/app-blink/v1/streaming/WebLiveCenterStartLive")) {
                 let url = new URL("https:" + args[0])
                 let data = url.searchParams
