@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ForceAllowLive 强制B站直播允许第三方开播
 // @namespace    https://shugen002.github.io/userscript
-// @version      0.5
+// @version      0.6
 // @description  强制B站直播允许第三方开播。
 // @author       shugen
 // @match        https://link.bilibili.com/p/center/index
@@ -38,6 +38,8 @@
     let overrideBxios = false
 
     let needOverride = true;
+
+    let roomId
 
     async function main() {
         injectWebpackJsonp()
@@ -93,6 +95,16 @@
     function setupFetchFilter() {
         window.$$fetchFilter.push(function (originalFetch, args) {
             if (!needOverride) return
+            if (args[1] && args[1].body) {
+                if (args[1].body.room_id) {
+                    roomId = args[1].body.room_id
+                    myConsole.log("GetRoomId", args[1].body.room_id)
+                }
+                if (args[1].body.roomid) {
+                    roomId = args[1].body.roomid
+                    myConsole.log("GetRoomId", args[1].body.roomid)
+                }
+            }
             if (args[0].startsWith("//api.live.bilibili.com/xlive/app-blink/v1/streaming/WebLiveCenterStartLive")) {
                 let url = new URL("https:" + args[0])
                 let data = url.searchParams
@@ -143,7 +155,6 @@
         let apiEntry = entries.find((entry) => {
             return entry[1].toString().includes("getAllResponseHeaders")
         })
-        let roomId
         if (apiEntry) {
             myConsole.log('Get Bxios')
             apiEntry[1]._call = apiEntry[1].call
@@ -157,15 +168,23 @@
                         let result = real(...args)
                         return result
                     }
-                    if (args[0].params && args[0].params.room_id) {
-                        roomId = args[0].params.room_id
+                    if (args[0].params) {
+                        if (args[0].params.room_id) {
+                            roomId = args[0].params.room_id
+                            myConsole.log("GetRoomId", args[0].params.room_id)
+
+                        }
+                        if (args[0].params.roomid) {
+                            roomId = args[0].params.roomid
+                            myConsole.log("GetRoomId", args[0].params.roomid)
+                        }
                     }
 
                     if (args[0].url == "//api.live.bilibili.com/xlive/app-blink/v1/live/FetchWebUpStreamAddr") {
                         if (!roomId) {
                             roomId = window.prompt("未能获取到你的房间号，请手动输入您的房间号")
                         }
-                        console.log(args[0])
+                        myConsole.log(args[0])
                         args[0].url = "//api.live.bilibili.com/live_stream/v1/StreamList/get_stream_by_roomId"
                         args[0].method = "GET"
                         args[0].params = { room_id: roomId }
