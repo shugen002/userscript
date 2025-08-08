@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ForceAllowLive 强制B站直播允许第三方开播
 // @namespace    https://shugen002.github.io/userscript
-// @version      0.6
+// @version      0.7
 // @description  强制B站直播允许第三方开播。
 // @author       shugen
 // @match        https://link.bilibili.com/p/center/index
@@ -98,11 +98,11 @@
             if (args[1] && args[1].body) {
                 if (args[1].body.room_id) {
                     roomId = args[1].body.room_id
-                    myConsole.log("GetRoomId", args[1].body.room_id)
+                    myConsole.log("GetRoomId from fetch body", args[1].body.room_id)
                 }
                 if (args[1].body.roomid) {
                     roomId = args[1].body.roomid
-                    myConsole.log("GetRoomId", args[1].body.roomid)
+                    myConsole.log("GetRoomId from fetch body", args[1].body.roomid)
                 }
             }
             if (args[0].startsWith("//api.live.bilibili.com/xlive/app-blink/v1/streaming/WebLiveCenterStartLive")) {
@@ -171,12 +171,12 @@
                     if (args[0].params) {
                         if (args[0].params.room_id) {
                             roomId = args[0].params.room_id
-                            myConsole.log("GetRoomId", args[0].params.room_id)
+                            myConsole.log("GetRoomId from Bxios Params", args[0].params.room_id)
 
                         }
                         if (args[0].params.roomid) {
                             roomId = args[0].params.roomid
-                            myConsole.log("GetRoomId", args[0].params.roomid)
+                            myConsole.log("GetRoomId from Bxios Params", args[0].params.roomid)
                         }
                     }
 
